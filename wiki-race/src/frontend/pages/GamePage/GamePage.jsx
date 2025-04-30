@@ -1,5 +1,6 @@
 import "./GamePage.css";
 import React, { useEffect, useState, useRef } from "react";
+import {Navigate} from "react-router-dom";
 
 function GamePage() {
   const [pageTitle, setPageTitle] = useState("");
@@ -10,6 +11,7 @@ function GamePage() {
   const startLink = useRef(null);
   const endLink = useRef(null);
   const initialized = useRef(false);
+  const [gameWon, setGameWon] = useState(false);
 
   //FETCH RANDOM PAGE TITLE - only on init
   useEffect(() => {
@@ -42,6 +44,7 @@ function GamePage() {
           url: endUrl
         };
 
+        console.log(endLink.current.title);
         //move on
         setPageTitle(startData.title);
       } catch (error) {
@@ -50,6 +53,12 @@ function GamePage() {
     };
     fetchPageTitle();
   }, []);
+
+   //win condition
+   useEffect(() => {
+    if(!pageTitle || !endLink.current?.title) return;
+    if(pageTitle == endLink.current.title) setGameWon(true);
+  }, [pageTitle]);
 
   //FETCH PAGE CONTENT
   useEffect(() => {
@@ -116,7 +125,7 @@ function GamePage() {
         } else {
           e.preventDefault();
         }
-      } catch (e) {
+      } catch (error) {
         console.error("could not load next page", error);
       }
     };
@@ -131,6 +140,10 @@ function GamePage() {
   if (!pageHtml)
     return <div style={{ background: "white", height: "100vh" }} />;
 
+  if(gameWon) {
+    return <Navigate to="/end" />;
+  };
+
   return (
     <div className="wiki-page">
       <div className="wiki-content-container">
@@ -141,6 +154,7 @@ function GamePage() {
           dangerouslySetInnerHTML={{ __html: pageHtml }}
         />
       </div>
+      
     </div>
   );
 }
