@@ -7,22 +7,43 @@ function GamePage() {
   const [loading, setLoading] = useState(true);
   const contentRef = useRef(null);
   const [clickHistory, setClickHistory] = useState([]);
-  const [startLink, setStartLink] = useRef(null);
-  const [endLink, setEndLink] = useRef(null);
+  const startLink = useRef(null);
+  const endLink = useRef(null);
+  const initialized = useRef(false);
 
-  //FETCH RANDOM PAGE TITLE
+  //FETCH RANDOM PAGE TITLE - only on init
   useEffect(() => {
     const fetchPageTitle = async () => {
       try {
-        const response = await fetch(
+        if(initialized.current) return;
+        initialized.current = true;
+        //init link, start and load w this
+        const startResponse = await fetch(
           "https://en.wikipedia.org/api/rest_v1/page/random/summary"
         );
-        const data = await response.json();
+        const startData = await startResponse.json();
 
-        const startUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(data.title)}`;
-        
+        const startUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(startData.title)}`;
 
-        setPageTitle(data.title);
+        startLink.current = {
+          title: startData.title,
+          url: startUrl
+        };
+         
+        //goal link
+        const endResponse = await fetch(
+          "https://en.wikipedia.org/api/rest_v1/page/random/summary"
+        );
+        const endData = await endResponse.json();
+        const endUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(endData.title)}`;
+
+        endLink.current = {
+          title: endData.title,
+          url: endUrl
+        };
+
+        //move on
+        setPageTitle(startData.title);
       } catch (error) {
         console.error("Error fetching page title:", error);
       }
@@ -46,7 +67,7 @@ function GamePage() {
 
         setClickHistory(prevHistory => [...prevHistory,{
           title: pageTitle,
-          url: pageUrl
+          url: `https://en.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`
       }]);
   
         console.log("clickHistory: ", clickHistory);
