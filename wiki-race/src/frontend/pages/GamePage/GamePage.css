@@ -1,0 +1,28 @@
+.wiki-page {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #202122;
+  background-color: white;
+  padding: 2rem;
+  padding-left: 8rem;
+  padding-right: 8rem;
+}
+
+.wiki-title {
+  font-family: "Linux Libertine", "Georgia", "serif";
+}
+
+.wiki-page h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Linux Libertine", "Georgia", "serif";
+  color: #202122;
+}
+.wiki-content-container {
+    margin: 0 auto;  
+    padding: 0;
+  }
+  
